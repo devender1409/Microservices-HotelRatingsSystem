@@ -4,6 +4,7 @@ import com.devender.user.service.entities.Hotel;
 import com.devender.user.service.entities.Rating;
 import com.devender.user.service.entities.User;
 import com.devender.user.service.exceptions.ResourceNotFoundException;
+import com.devender.user.service.external.services.HotelService;
 import com.devender.user.service.repositories.UserRepository;
 import com.devender.user.service.services.UserService;
 import org.slf4j.Logger;
@@ -26,6 +27,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private RestTemplate restTemplate;
+
+    @Autowired
+    private HotelService hotelService;
 
     private Logger logger = LoggerFactory.getLogger(UserService.class);
 
@@ -65,8 +69,8 @@ public class UserServiceImpl implements UserService {
         List<Rating> ratingListWithHotels = ratings.stream().map(rating->{
 //            //api call to hotel service to get the hotel
 ////            localhost:8082/hotels/be534350-606c-431f-a06e-768b81ab2a64
-            ResponseEntity<Hotel> forEntity = restTemplate.getForEntity("http://HOTEL-SERVICE/hotels/"+rating.getHotelId(), Hotel.class);
-            Hotel hotel = forEntity.getBody();
+//            ResponseEntity<Hotel> forEntity = restTemplate.getForEntity("http://HOTEL-SERVICE/hotels/"+rating.getHotelId(), Hotel.class);
+            Hotel hotel = hotelService.getHotel(rating.getHotelId());
 //            //set the hotel to rating
             rating.setHotel(hotel);
 //            //return the rating
